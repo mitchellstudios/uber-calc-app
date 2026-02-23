@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Ride-Share Trip Auditor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ride-Share Trip Auditor</h1>
+        <p class="subtitle">Upload Waybill and Trip Details screenshots to audit your fare</p>
+
+        <!-- Screenshot Upload Section -->
+        <section class="upload-section">
+            <h2>Screenshots</h2>
+            <div class="upload-grid">
+                <div class="upload-box">
+                    <label for="waybillInput">Waybill</label>
+                    <input type="file" id="waybillInput" accept="image/*" capture="environment">
+                    <div class="upload-preview" id="waybillPreview">
+                        <span class="upload-placeholder">Drop or select image</span>
+                    </div>
+                </div>
+                <div class="upload-box">
+                    <label for="tripDetailsInput">Trip Details</label>
+                    <input type="file" id="tripDetailsInput" accept="image/*" capture="environment">
+                    <div class="upload-preview" id="tripDetailsPreview">
+                        <span class="upload-placeholder">Drop or select image</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="extractBtn" class="btn btn-secondary">Extract from Screenshots</button>
+        </section>
+
+        <!-- Data Fields (from Waybill + Trip Details) -->
+        <section class="data-section">
+            <h2>Fare Data</h2>
+            <div class="data-grid">
+                <div class="data-group">
+                    <h3>From Waybill</h3>
+                    <div class="input-group">
+                        <label for="baseFare">Base Fare ($)</label>
+                        <input type="number" id="baseFare" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label for="perMinuteRate">Per Minute Rate ($)</label>
+                        <input type="number" id="perMinuteRate" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label for="perKmRate">Per KM Rate ($)</label>
+                        <input type="number" id="perKmRate" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="data-group">
+                    <h3>From Trip Details</h3>
+                    <div class="input-group">
+                        <label for="duration">Duration (decimal minutes)</label>
+                        <input type="number" id="duration" step="0.01" placeholder="e.g. 12.57">
+                        <small>Convert "12 min 34 sec" → 12.57</small>
+                    </div>
+                    <div class="input-group">
+                        <label for="distance">Distance (km)</label>
+                        <input type="number" id="distance" step="0.01" placeholder="e.g. 5.2">
+                    </div>
+                    <div class="input-group">
+                        <label for="indentedFare">First Indented Fare ($)</label>
+                        <input type="number" id="indentedFare" step="0.01" placeholder="Amount under Fare total">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculate & Report -->
+        <section class="report-section">
+            <button type="button" id="calculateBtn" class="btn btn-primary">Calculate & Audit</button>
+            <div class="report" id="report">
+                <div class="report-row">
+                    <strong>Expected Fare:</strong>
+                    <span id="expectedFare">$—</span>
+                </div>
+                <div class="report-row">
+                    <strong>Actual Indented Fare:</strong>
+                    <span id="actualFare">$—</span>
+                </div>
+                <div class="report-row result-row">
+                    <strong>Result:</strong>
+                    <span id="result">—</span>
+                </div>
+            </div>
+            <button type="button" id="clearBtn" class="btn btn-outline">Clear All</button>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
