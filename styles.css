@@ -6,7 +6,9 @@
     color: #1a1a1a;
 }
 
-body {
+body.trip-auditor-app {
+    margin: 0;
+    padding: 0;
     background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
     min-height: 100vh;
     display: flex;
@@ -57,11 +59,13 @@ section {
 }
 
 .upload-section {
+    display: block !important;
+    visibility: visible !important;
     margin-bottom: 2rem;
 }
 
 .upload-grid {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1rem;
@@ -84,14 +88,14 @@ section {
 }
 
 .upload-preview {
-    min-height: 120px;
-    border: 2px dashed #cbd5e1;
+    min-height: 120px !important;
+    border: 2px dashed #cbd5e1 !important;
     border-radius: 8px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: #f8fafc;
+    background: #f8fafc !important;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
 }
