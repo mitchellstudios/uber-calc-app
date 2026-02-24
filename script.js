@@ -40,9 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFileInput(waybillInput, waybillPreview, (f) => { waybillFile = f; });
     setupFileInput(tripDetailsInput, tripDetailsPreview, (f) => { tripDetailsFile = f; });
 
-    // Parse dollar amounts from OCR text
+    // Round to exact cents (no floating-point drift)
+    function roundToCent(n) {
+        if (typeof n !== 'number' || isNaN(n)) return n;
+        return Math.round(n * 100) / 100;
+    }
+
+    // Parse dollar amounts from OCR text (only values that look like currency: $X.XX or X.XX)
+    // Excludes integers like 5, 45, 4, 409 so we don't pull in time, capacity, battery, etc.
     function parseDollarAmounts(text) {
-        const matches = text.match(/\$?\s*[\d,]+\.?\d*/g) || [];
+        const matches = text.match(/\$?\s*[\d,]+\.\d{2}\b/g) || [];
         return matches.map(m => parseFloat(m.replace(/[$,]/g, ''))).filter(n => !isNaN(n));
     }
 
@@ -92,17 +99,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Extract from Trip Details: Duration, Distance, first Indented Fare
+    // First indented fare = the amount directly under the top "Fare" total (second amount in order)
     function extractFromTripDetails(text) {
         const durationVal = parseDuration(text);
         const distanceVal = parseDistance(text);
         const amounts = parseDollarAmounts(text);
-        // First indented fare is often the second or third amount (after total)
         const indentedFareVal = amounts.length >= 2 ? amounts[1] : amounts[0];
 
         return {
             duration: durationVal,
             distance: distanceVal,
-            indentedFare: indentedFareVal
+            indentedFare: indentedFareVal != null ? roundToCent(indentedFareVal) : null
         };
     }
 
@@ -132,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const t = extractFromTripDetails(text);
                 if (t.duration != null) duration.value = t.duration.toFixed(2);
                 if (t.distance != null) distance.value = t.distance;
-                if (t.indentedFare != null) indentedFare.value = t.indentedFare;
+                if (t.indentedFare != null) indentedFare.value = String(t.indentedFare);
             }
 
             await worker.terminate();
@@ -160,16 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!hasRates && base === 0) {
             expectedFareEl.textContent = '$—';
-            actualFareEl.textContent = hasActual ? `$${actual.toFixed(2)}` : '$—';
+            actualFareEl.textContent = hasActual ? `$${roundToCent(actual).toFixed(2)}` : '$—';
             resultEl.textContent = '—';
             resultEl.className = '';
             return;
         }
 
-        const expected = base + (mins * perMin) + (km * perKm);
+        const expected = roundToCent(base + (mins * perMin) + (km * perKm));
 
         expectedFareEl.textContent = `$${expected.toFixed(2)}`;
-        actualFareEl.textContent = hasActual ? `$${actual.toFixed(2)}` : '$—';
+        actualFareEl.textContent = hasActual ? `$${roundToCent(actual).toFixed(2)}` : '$—';
 
         if (!hasActual) {
             resultEl.textContent = '—';
@@ -177,15 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const diff = actual - expected;
-        if (Math.abs(diff) < 0.01) {
+        const actualRounded = roundToCent(actual);
+        const diff = roundToCent(actualRounded - expected);
+        if (Math.abs(diff) < 0.005) {
             resultEl.textContent = 'Match';
             resultEl.className = 'result-match';
         } else if (diff < 0) {
             resultEl.textContent = `Underpaid by $${Math.abs(diff).toFixed(2)}`;
             resultEl.className = 'result-underpaid';
         } else {
-            resultEl.textContent = `Overpaid by $${diff.toFixed(2)}`;
+            resultEl.textContent = `Overpaid by $${roundToCent(diff).toFixed(2)}`;
             resultEl.className = 'result-overpaid';
         }
     }

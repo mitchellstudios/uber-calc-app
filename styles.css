@@ -29,8 +29,13 @@ body.trip-auditor-app {
 h1 {
     text-align: center;
     color: #0f172a;
-    margin-bottom: 0.5rem;
-    font-size: 1.75rem;
+}
+
+.app-version {
+    font-size: 0.65em;
+    font-weight: normal;
+    color: #94a3b8;
+    margin-left: 0.25em;
 }
 
 .subtitle {
