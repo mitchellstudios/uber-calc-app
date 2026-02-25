@@ -1,15 +1,19 @@
 <!DOCTYPE html>
+<!-- VERSION: 1.0.5 - Bump this and ?v= params on styles.css + script.js when making changes -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Ride-Share Trip Auditor</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1.0.5">
 </head>
 <body class="trip-auditor-app">
-    <div class="container">
-        <h1>Ride-Share Trip Auditor <span class="app-version">v1.0.3</span></h1>
+    <div id="trip-auditor-root" class="container">
+        <h1>Ride-Share Trip Auditor <span class="app-version">v1.0.5</span></h1>
         <p class="subtitle">Upload Waybill and Trip Details screenshots to audit your fare</p>
 
         <!-- Screenshot Upload Section -->
@@ -18,20 +22,20 @@
             <div class="upload-grid">
                 <div class="upload-box">
                     <label for="waybillInput">Waybill</label>
-                    <input type="file" id="waybillInput" accept="image/*">
+                    <input type="file" id="waybillInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                     <div class="upload-preview" id="waybillPreview">
                         <span class="upload-placeholder">Drop or select image</span>
                     </div>
                 </div>
                 <div class="upload-box">
                     <label for="tripDetailsInput">Trip Details</label>
-                    <input type="file" id="tripDetailsInput" accept="image/*">
+                    <input type="file" id="tripDetailsInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                     <div class="upload-preview" id="tripDetailsPreview">
                         <span class="upload-placeholder">Drop or select image</span>
                     </div>
                 </div>
             </div>
-            <button type="button" id="extractBtn" class="btn btn-secondary">Extract from Screenshots</button>
+            <button type="button" id="extractBtn" class="btn btn-secondary" disabled onclick="window.extractFromScreenshots && window.extractFromScreenshots()">Extract from Screenshots</button>
         </section>
 
         <!-- Data Fields (from Waybill + Trip Details) -->
@@ -93,6 +97,6 @@
         </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=1.0.5"></script>
 </body>
 </html>

@@ -1,33 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Elements
-    const waybillInput = document.getElementById('waybillInput');
-    const tripDetailsInput = document.getElementById('tripDetailsInput');
-    const waybillPreview = document.getElementById('waybillPreview');
-    const tripDetailsPreview = document.getElementById('tripDetailsPreview');
-    const extractBtn = document.getElementById('extractBtn');
-    const calculateBtn = document.getElementById('calculateBtn');
-    const clearBtn = document.getElementById('clearBtn');
+var tripAuditorInitialized = false;
 
-    const baseFare = document.getElementById('baseFare');
-    const perMinuteRate = document.getElementById('perMinuteRate');
-    const perKmRate = document.getElementById('perKmRate');
-    const duration = document.getElementById('duration');
-    const distance = document.getElementById('distance');
-    const indentedFare = document.getElementById('indentedFare');
+function initTripAuditor() {
+    if (tripAuditorInitialized) return;
 
-    const expectedFareEl = document.getElementById('expectedFare');
-    const actualFareEl = document.getElementById('actualFare');
-    const resultEl = document.getElementById('result');
+    var root = document.getElementById('trip-auditor-root');
+    if (!root) {
+        if (document.readyState !== 'complete') setTimeout(initTripAuditor, 100);
+        return;
+    }
+
+    var waybillInput = root.querySelector('#waybillInput');
+    var tripDetailsInput = root.querySelector('#tripDetailsInput');
+    var waybillPreview = root.querySelector('#waybillPreview');
+    var tripDetailsPreview = root.querySelector('#tripDetailsPreview');
+    var extractBtn = root.querySelector('#extractBtn');
+    var calculateBtn = root.querySelector('#calculateBtn');
+    var clearBtn = root.querySelector('#clearBtn');
+    var baseFare = root.querySelector('#baseFare');
+    var perMinuteRate = root.querySelector('#perMinuteRate');
+    var perKmRate = root.querySelector('#perKmRate');
+    var duration = root.querySelector('#duration');
+    var distance = root.querySelector('#distance');
+    var indentedFare = root.querySelector('#indentedFare');
+    var expectedFareEl = root.querySelector('#expectedFare');
+    var actualFareEl = root.querySelector('#actualFare');
+    var resultEl = root.querySelector('#result');
+
+    if (!waybillInput || !tripDetailsInput || !waybillPreview || !tripDetailsPreview || !extractBtn) {
+        if (document.readyState === 'complete') {
+            console.error('Trip Auditor: Required elements not found.');
+        } else {
+            setTimeout(initTripAuditor, 100);
+        }
+        return;
+    }
 
     let waybillFile = null;
     let tripDetailsFile = null;
 
-    // File upload & preview
+    // File upload & preview (JPG and PNG only)
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const allowedExt = /\.(jpe?g|png)$/i;
+
+    function isValidImage(file) {
+        return allowedTypes.includes(file.type) || allowedExt.test(file.name);
+    }
+
     function setupFileInput(input, preview, setFile) {
-        preview.addEventListener('click', () => input.click());
-        input.addEventListener('change', (e) => {
+        if (!input || !preview) return;
+        try {
+            preview.addEventListener('click', function() { if (input) input.click(); });
+            input.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                if (!isValidImage(file)) {
+                    alert('Please upload only JPG or PNG images.');
+                    input.value = '';
+                    return;
+                }
                 setFile(file);
                 const reader = new FileReader();
                 reader.onload = (ev) => {
@@ -36,9 +66,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.readAsDataURL(file);
             }
         });
+        } catch (err) {
+            console.error('Trip Auditor setup error:', err);
+        }
     }
-    setupFileInput(waybillInput, waybillPreview, (f) => { waybillFile = f; });
-    setupFileInput(tripDetailsInput, tripDetailsPreview, (f) => { tripDetailsFile = f; });
+
+    function updateExtractButton() {
+        if (extractBtn) extractBtn.disabled = !waybillFile && !tripDetailsFile;
+    }
+
+    if (waybillInput && waybillPreview) setupFileInput(waybillInput, waybillPreview, function(f) { waybillFile = f; updateExtractButton(); });
+    if (tripDetailsInput && tripDetailsPreview) setupFileInput(tripDetailsInput, tripDetailsPreview, function(f) { tripDetailsFile = f; updateExtractButton(); });
 
     // Round to exact cents (no floating-point drift)
     function roundToCent(n) {
@@ -115,6 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Extract from screenshots using Tesseract
     async function extractFromScreenshots() {
+        if (typeof Tesseract === 'undefined') {
+            alert('OCR library is still loading. Please wait a moment and try again.');
+            return;
+        }
         if (!waybillFile && !tripDetailsFile) {
             alert('Please upload at least one screenshot (Waybill or Trip Details).');
             return;
@@ -124,7 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         extractBtn.textContent = 'Extracting...';
 
         try {
-            const worker = await Tesseract.createWorker('eng');
+            const worker = await Tesseract.createWorker();
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
 
             if (waybillFile) {
                 const { data: { text } } = await worker.recognize(waybillFile);
@@ -201,12 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAll() {
         waybillFile = null;
         tripDetailsFile = null;
-        waybillInput.value = '';
-        tripDetailsInput.value = '';
-        waybillPreview.innerHTML = '<span class="upload-placeholder">Drop or select image</span>';
-        tripDetailsPreview.innerHTML = '<span class="upload-placeholder">Drop or select image</span>';
+        if (waybillInput) waybillInput.value = '';
+        if (tripDetailsInput) tripDetailsInput.value = '';
+        if (waybillPreview) waybillPreview.innerHTML = '<span class="upload-placeholder">Drop or select image</span>';
+        if (tripDetailsPreview) tripDetailsPreview.innerHTML = '<span class="upload-placeholder">Drop or select image</span>';
+        updateExtractButton();
 
-        [baseFare, perMinuteRate, perKmRate, duration, distance, indentedFare].forEach(el => { el.value = ''; });
+        [baseFare, perMinuteRate, perKmRate, duration, distance, indentedFare].filter(Boolean).forEach(el => { el.value = ''; });
 
         expectedFareEl.textContent = '$—';
         actualFareEl.textContent = '$—';
@@ -214,12 +259,25 @@ document.addEventListener('DOMContentLoaded', () => {
         resultEl.className = '';
     }
 
-    extractBtn.addEventListener('click', extractFromScreenshots);
-    calculateBtn.addEventListener('click', calculateAndAudit);
-    clearBtn.addEventListener('click', clearAll);
+    if (extractBtn) {
+        extractBtn.addEventListener('click', extractFromScreenshots);
+        extractBtn.onclick = extractFromScreenshots;
+    }
+    window.extractFromScreenshots = extractFromScreenshots;
+    if (calculateBtn) calculateBtn.addEventListener('click', calculateAndAudit);
+    if (clearBtn) clearBtn.addEventListener('click', clearAll);
 
     // Recalculate on input change
-    [baseFare, perMinuteRate, perKmRate, duration, distance, indentedFare].forEach(el => {
+    [baseFare, perMinuteRate, perKmRate, duration, distance, indentedFare].filter(Boolean).forEach(el => {
         el.addEventListener('input', calculateAndAudit);
     });
-});
+
+    tripAuditorInitialized = true;
+}
+
+// Script is at end of body, so DOM is ready. Retry logic handles AJAX-loaded content.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTripAuditor);
+} else {
+    initTripAuditor();
+}
