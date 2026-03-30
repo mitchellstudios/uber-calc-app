@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trip-auditor-v1.5.0';
+const CACHE_NAME = 'fare-wise-v1.5.0';
 const LOCAL_ASSETS = [
     './',
     './splash.html',

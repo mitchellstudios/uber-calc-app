@@ -59,7 +59,7 @@ struct ContentView: View {
                     .padding(.vertical, 20)
                 }
                 .background(Color(.systemGroupedBackground))
-                .navigationTitle("Trip Auditor")
+                .navigationTitle("FareWise")
                 .navigationBarTitleDisplayMode(.large)
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {

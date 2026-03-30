@@ -45,7 +45,7 @@ struct SplashView: View {
                 .padding(.bottom, 28)
 
                 // Title
-                Text("Trip Auditor")
+                Text("FareWise")
                     .font(.system(size: 42, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)

@@ -1,11 +1,11 @@
-var tripAuditorInitialized = false;
+var fareWiseInitialized = false;
 
-function initTripAuditor() {
-    if (tripAuditorInitialized) return;
+function initFareWise() {
+    if (fareWiseInitialized) return;
 
-    var root = document.getElementById('trip-auditor-root');
+    var root = document.getElementById('fare-wise-root');
     if (!root) {
-        if (document.readyState !== 'complete') setTimeout(initTripAuditor, 100);
+        if (document.readyState !== 'complete') setTimeout(initFareWise, 100);
         return;
     }
 
@@ -30,9 +30,9 @@ function initTripAuditor() {
 
     if (!imageInput1 || !imageInput2 || !preview1 || !preview2) {
         if (document.readyState === 'complete') {
-            console.error('Trip Auditor: Required elements not found.');
+            console.error('FareWise: Required elements not found.');
         } else {
-            setTimeout(initTripAuditor, 100);
+            setTimeout(initFareWise, 100);
         }
         return;
     }
@@ -72,7 +72,7 @@ function initTripAuditor() {
                 }
             });
         } catch (err) {
-            console.error('Trip Auditor setup error:', err);
+            console.error('FareWise setup error:', err);
         }
     }
 
@@ -375,12 +375,12 @@ function initTripAuditor() {
         el.addEventListener('input', calculateAndAudit);
     });
 
-    tripAuditorInitialized = true;
+    fareWiseInitialized = true;
 }
 
 // Script is at end of body, so DOM is ready. Retry logic handles AJAX-loaded content.
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTripAuditor);
+    document.addEventListener('DOMContentLoaded', initFareWise);
 } else {
-    initTripAuditor();
+    initFareWise();
 }

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this app does
 
-A static single-page web app ("Ride-Share Trip Auditor") that helps ride-share drivers audit their fares. Users upload Waybill and Trip Details screenshots; Tesseract.js OCR extracts the values; the app calculates the expected fare and compares it to the actual indented fare.
+A static single-page web app ("FareWise") that helps ride-share drivers audit their fares. Users upload Waybill and Trip Details screenshots; Tesseract.js OCR extracts the values; the app calculates the expected fare and compares it to the actual indented fare.
 
 ## Stack
 
@@ -32,7 +32,7 @@ No compilation, no install step.
 
 ## Deployment
 
-The app is embedded at `abouttowncars.com.au/calapp/` via an iframe or WordPress injection. The `body.trip-auditor-app` class and `#trip-auditor-root` container ID scope all styles and JS to avoid conflicts with the host site. The `initTripAuditor()` function uses retry logic (`setTimeout`) to handle AJAX-loaded host pages.
+The app is embedded at `abouttowncars.com.au/calapp/` via an iframe or WordPress injection. The `body.fare-wise-app` class and `#fare-wise-root` container ID scope all styles and JS to avoid conflicts with the host site. The `initFareWise()` function uses retry logic (`setTimeout`) to handle AJAX-loaded host pages.
 
 ## Key logic (script.js)
 

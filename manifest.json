@@ -1,6 +1,6 @@
 {
-  "name": "Uber Calc — Ride-Share Trip Auditor",
-  "short_name": "Uber Calc",
+  "name": "FareWise — Ride-Share Fare Auditor",
+  "short_name": "FareWise",
   "description": "Audit your ride-share fares by comparing expected vs actual fares",
   "start_url": "./splash.html",
   "display": "standalone",
