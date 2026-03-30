@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <!-- PWA / iPhone home screen -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Uber Calc">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <title>Uber Calc — Ride-Share Trip Auditor</title>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: #1e3a8a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            color: #ffffff;
+        }
+
+        .splash {
+            text-align: center;
+            padding: 2rem;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .logo-wrap {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 2rem;
+            animation: logoIn 1s ease-out both;
+        }
+
+        .logo-wrap svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 3rem;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-start {
+            display: inline-block;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e40af;
+            background: #ffffff;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes logoIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .logo-wrap {
+                width: 110px;
+                height: 110px;
+                margin-bottom: 1.5rem;
+            }
+            .title {
+                font-size: 2.25rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 2.5rem;
+            }
+            .btn-start {
+                padding: 0.9rem 2.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-height: 500px) {
+            .logo-wrap {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 1rem;
+            }
+            .subtitle {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash">
+        <div class="logo-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <circle cx="256" cy="256" r="240" fill="rgba(255,255,255,0.15)"/>
+                <!-- Car body -->
+                <path d="M130 296 c0-12 4-20 12-20 l28 0 l24-52 c6-13 18-20 32-20 l60 0 c14 0 26 7 32 20 l24 52 l28 0 c8 0 12 8 12 20 l0 20 c0 8-6 14-14 14 l-10 0 c-4 22-24 38-46 38 c-22 0-42-16-46-38 l-60 0 c-4 22-24 38-46 38 c-22 0-42-16-46-38 l-10 0 c-8 0-14-6-14-14 z"
+                      fill="white"/>
+                <!-- Windows -->
+                <path d="M196 224 l-16 36 l72 0 l0-36 z" fill="#3b82f6" opacity="0.6"/>
+                <path d="M264 224 l0 36 l72 0 l-16-36 z" fill="#3b82f6" opacity="0.6"/>
+                <!-- Front wheel -->
+                <circle cx="200" cy="340" r="22" fill="#1e3a8a"/>
+                <circle cx="200" cy="340" r="10" fill="#93c5fd"/>
+                <!-- Rear wheel -->
+                <circle cx="312" cy="340" r="22" fill="#1e3a8a"/>
+                <circle cx="312" cy="340" r="10" fill="#93c5fd"/>
+            </svg>
+        </div>
+        <h1 class="title">Uber Calc</h1>
+        <p class="subtitle">Ride-Share Trip Auditor</p>
+        <a href="index.html" class="btn-start">Get Started</a>
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(function(reg) {
+                reg.update();
+            });
+        }
+    </script>
+</body>
+</html>

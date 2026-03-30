@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate App Icons</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        h1 { margin-bottom: 0.5rem; }
+        p.info { color: #64748b; margin-bottom: 2rem; }
+        .icon-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        canvas {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .label {
+            flex: 1;
+        }
+        .label strong { display: block; font-size: 1.1rem; }
+        .label span { color: #64748b; font-size: 0.9rem; }
+        button {
+            padding: 0.6rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        button:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <h1>Generate App Icons</h1>
+    <p class="info">Each icon renders the SVG onto a canvas. Click "Download" to save as PNG. Rename the 180px file to <code>apple-touch-icon.png</code>.</p>
+
+    <div id="icons"></div>
+
+    <script>
+        const sizes = [
+            { size: 180, filename: 'apple-touch-icon.png', label: 'Apple Touch Icon', desc: '180x180 — for iOS home screen' },
+            { size: 192, filename: 'icon-192.png', label: 'PWA Icon (small)', desc: '192x192 — Android / PWA manifest' },
+            { size: 512, filename: 'icon-512.png', label: 'PWA Icon (large)', desc: '512x512 — PWA splash / manifest' },
+        ];
+
+        const svgSource = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="90" fill="#2563eb"/>
+  <path d="M108 304 c0-14 6-22 16-22 l26 0 l28-58 c7-15 22-24 38-24 l80 0 c16 0 31 9 38 24 l28 58 l26 0 c10 0 16 8 16 22 l0 22 c0 10-8 16-16 16 l-8 0 c-4 26-28 44-54 44 c-26 0-50-18-54-44 l-48 0 c-4 26-28 44-54 44 c-26 0-50-18-54-44 l-8 0 c-8 0-16-6-16-16 z" fill="white"/>
+  <path d="M190 224 l-20 42 l82 0 l0-42 z" fill="#93c5fd"/>
+  <path d="M264 224 l0 42 l82 0 l-20-42 z" fill="#93c5fd"/>
+  <circle cx="196" cy="352" r="26" fill="#1e3a8a"/>
+  <circle cx="196" cy="352" r="12" fill="#93c5fd"/>
+  <circle cx="316" cy="352" r="26" fill="#1e3a8a"/>
+  <circle cx="316" cy="352" r="12" fill="#93c5fd"/>
+</svg>`;
+
+        const container = document.getElementById('icons');
+
+        sizes.forEach(({ size, filename, label, desc }) => {
+            const row = document.createElement('div');
+            row.className = 'icon-row';
+
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            // Display at max 120px in the UI
+            const displaySize = Math.min(size, 120);
+            canvas.style.width = displaySize + 'px';
+            canvas.style.height = displaySize + 'px';
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'label';
+            labelDiv.innerHTML = `<strong>${label}</strong><span>${desc}</span>`;
+
+            const btn = document.createElement('button');
+            btn.textContent = 'Download ' + filename;
+
+            // Render SVG to canvas
+            const img = new Image();
+            const blob = new Blob([svgSource], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            img.onload = function () {
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, size, size);
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+
+            btn.addEventListener('click', function () {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+
+            row.appendChild(canvas);
+            row.appendChild(labelDiv);
+            row.appendChild(btn);
+            container.appendChild(row);
+        });
+    </script>
+</body>
+</html>

@@ -11,10 +11,13 @@ body.trip-auditor-app {
     padding: 0;
     background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 2rem 1rem;
+    /* Safe area insets for iPhone notch / Dynamic Island */
+    padding: calc(2rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) calc(2rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
+    -webkit-text-size-adjust: 100%;
 }
 
 .container {
@@ -80,6 +83,30 @@ section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+}
+
+.upload-hint {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+}
+
+.detected-label {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-height: 1.1em;
+    margin-top: 0.25rem;
+}
+
+.detected-waybill {
+    color: #7c3aed;
+}
+
+.detected-trip {
+    color: #0891b2;
 }
 
 .upload-box label {
@@ -165,8 +192,10 @@ input[type="number"] {
     padding: 0.6rem 0.75rem;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 16px; /* Prevents iOS auto-zoom on focus */
     color: #1e293b;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="number"]:focus {
@@ -241,6 +270,9 @@ input[type="number"]:focus {
     cursor: pointer;
     pointer-events: auto;
     transition: background-color 0.2s, transform 0.05s;
+    touch-action: manipulation; /* Prevents double-tap zoom on iOS */
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px; /* Apple HIG minimum touch target */
 }
 
 .btn:active {
